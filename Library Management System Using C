@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <string.h>
+struct book{
+    char bn[100],an[100],status[100];
+    int id;
+}b[100];
+int main()
+{
+    static int ind=0,id=1001,i,p,c,l;
+    char a[100];
+    menu:
+      printf("welcome to library \n1.Admin \n2.Student \n3.Exit \n");
+      scanf("%d",&c);
+      
+    
+   if(c==1)
+   {
+   printf("Enter the ID: ");
+   scanf("%s",a);
+   printf("Enter the Password: ");
+   scanf("\n%d",&p);
+
+   if(!strcmp(a,"ad101")&&p==123)
+   admin:
+         printf("logged in successfully \n1.Add Book \n2.Report \n3.log out \n");
+         else 
+ 		 goto menu;
+         scanf("%d",&c);
+         if(c==1)
+         {
+          printf("Enter the number of Books: ");
+          scanf("%d",&c);
+          for( ind=0;ind<c;ind++)
+          {
+              printf("Enter the Book name: ");
+              scanf("%s",b[ind].bn);
+              printf("Enter the Author name: ");
+              scanf("%s",b[ind].an);
+              printf("Your book id is: %d\n",id);
+              b[ind].id=id;
+              id++;
+              strcpy(b[ind].status,"Available");
+          }
+          goto admin;
+         }
+      else if(c==2)
+      {
+         FILE *t;
+         t=fopen("Report.txt","w");
+         for(i=0;i<ind;i++)
+         {
+            fprintf(t,"%s %s %s %d\n",b[i].bn,b[i].an,b[i].status,b[i].id);
+         }
+         fclose(t);
+      goto admin;
+      }
+      else if(c==3)
+      goto menu;
+}
+else if(c==2)
+{
+   student:
+      printf("1.View Book \n2.Lend Book \n3.Return Book \n4.Main Menu \n");
+      scanf("%d",&c);
+      if(c==1)
+      {
+      for(i=0;i<ind;i++)
+      {
+         printf("%s %s %s %d\n",b[i].bn,b[i].an,b[i].status,b[i].id);
+      }
+      goto student;
+      }
+      else if(c==2)
+      {
+      printf("Enter the Book id: ");
+      scanf("%d",&l);
+      int f=1;
+      for(i=0;i<ind;i++)
+      {
+         if(l==b[i].id&&!strcmp("Available",b[i].status))
+         {
+            printf("Book Lended Successfully");
+            strcpy(b[i].status,"Not Available");
+            f=0;
+         }
+         if(f)
+         printf("Invalid");
+         
+      }
+      goto student;
+      }
+      else if(c==3)
+      {
+      printf("Enter the Book id: ");
+      scanf("%d",&p);
+      int f=1;
+      for(i=0;i<ind;i++)
+      {
+         if(p==b[i].id&&!strcmp("Not Available",b[i].status))
+         {
+         printf("Returned Successfully");
+         strcpy(b[i].status,"Available");
+         f=0;
+         }
+      }
+      if(f)
+         printf("Invalid");
+      goto student;
+      }
+      else if(c==4)
+      goto menu;
+}
+else if(c==3)	printf("Thank you");
+}
+
+
+
