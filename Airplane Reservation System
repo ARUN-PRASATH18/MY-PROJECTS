@@ -1,0 +1,127 @@
+class Cash:
+    flights = [
+        [100, "Kingfisher", 1500, "Bangalore", "Chennai"],
+        [101, "Indigo", 2000, "Trichy", "Kerala"],
+        [102, "Vistara", 2500, "Pondicherry", "Goa"]
+    ]
+    passengers = {}
+    next_id = 1000
+
+
+def passenger_menu():
+    while True:
+        choice = int(input("\t1. Signup\n\t2. Signin\n\t3. Exit\n\nPress the number: "))
+        if choice == 1:
+            name = input("Enter Your Name: ").strip()
+            password = input("Enter Your Password (numeric): ").strip()
+            if not password.isdigit():
+                print("Password must be numeric. Please try again.")
+                continue
+            Cash.passengers[Cash.next_id] = [
+                Cash.next_id, name, int(password), 0, "nil", 0, 0, "nil", "nil", "Yet to book"
+            ]
+            print(f"Your ID is: {Cash.next_id}")
+            print("\t\t\t### Your ID is created successfully ###")
+            Cash.next_id += 1
+        elif choice == 2:
+            try:
+                passenger_id = int(input("Enter Your ID: "))
+                if passenger_id not in Cash.passengers:
+                    print("Invalid ID! Please try again.")
+                    continue
+                password = int(input("Enter Your Password: "))
+                if Cash.passengers[passenger_id][2] != password:
+                    print("Incorrect password. Try again.")
+                    continue
+
+                while True:
+                    action = int(input(
+                        "\n1. Check Availability and Fare\n2. Book Ticket\n3. View Bookings\n4. Exit\n\nPress the number: "
+                    ))
+                    if action == 1:
+                        for flight in Cash.flights:
+                            print(flight)
+                        frm = input("Enter the From Location: ").strip()
+                        to = input("Enter the To Location: ").strip()
+                        for flight in Cash.flights:
+                            if frm == flight[3] and to == flight[4]:
+                                print(*flight, sep="\t")
+                                break
+                        else:
+                            print("No flights available for this route.")
+                    elif action == 2:
+                        flight_id = int(input("Enter the Flight ID: "))
+                        for flight in Cash.flights:
+                            if flight[0] == flight_id:
+                                tickets = int(input("Enter the Number of Tickets: "))
+                                Cash.passengers[passenger_id][3:] = [
+                                    flight_id, flight[1], tickets, tickets * flight[2],
+                                    flight[3], flight[4], "Pending"
+                                ]
+                                print(f"Your flight fare is: {tickets * flight[2]}")
+                                print("Your request has been submitted successfully.")
+                                break
+                        else:
+                            print("Invalid Flight ID.")
+                    elif action == 3:
+                        print("\nPassenger ID\tName\tPassword\tFlight ID\tFlight Name\tTickets\tFare\tFrom\tTo\tStatus")
+                        for p in Cash.passengers.values():
+                            print(*p, sep="\t")
+                    else:
+                        break
+            except ValueError:
+                print("Invalid input. Please try again.")
+        else:
+            break
+
+
+def cashier_menu():
+    while True:
+        choice = int(input("\n1. View Bookings\n2. Approve\n3. Cancel Pending\n4. Exit\n\nPress the key: "))
+        if choice == 1:
+            print("\nPassenger ID\tName\tPassword\tFlight ID\tFlight Name\tTickets\tFare\tFrom\tTo\tStatus")
+            for p in Cash.passengers.values():
+                print(*p, sep="\t")
+        elif choice == 2:
+            approve_choice = int(input("\n1. Approve by ID\n2. Approve All\n\nEnter the key: "))
+            if approve_choice == 1:
+                passenger_id = int(input("Enter Passenger ID: "))
+                if passenger_id in Cash.passengers and Cash.passengers[passenger_id][9] == "Pending":
+                    Cash.passengers[passenger_id][9] = "Approved"
+                    print(f"Ticket approved for Passenger ID: {passenger_id}")
+                else:
+                    print("No pending ticket for this ID.")
+            elif approve_choice == 2:
+                approved = False
+                for passenger in Cash.passengers.values():
+                    if passenger[9] == "Pending":
+                        passenger[9] = "Approved"
+                        approved = True
+                if approved:
+                    print("All pending tickets have been approved.")
+                else:
+                    print("No pending tickets to approve.")
+        elif choice == 3:
+            canceled = False
+            for passenger in Cash.passengers.values():
+                if passenger[9] == "Pending":
+                    passenger[9] = "Canceled"
+                    canceled = True
+            if canceled:
+                print("All pending tickets have been canceled.")
+            else:
+                print("No pending tickets to cancel.")
+        else:
+            break
+
+
+print("\t\t\t\t********* Welcome to Indian Airbus **********")
+while True:
+    main_choice = int(input('\n1. Passenger\n2. Cashier\n3. Exit\n\nPress the number: '))
+    if main_choice == 1:
+        passenger_menu()
+    elif main_choice == 2:
+        cashier_menu()
+    else:
+        print("\t\t\t\t***** Thank you for visiting Indian Airbus *****")
+        break
